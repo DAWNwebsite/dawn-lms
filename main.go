@@ -6,7 +6,9 @@ import (
 	"aida/routers"
 	"log"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/gorm/logger"
@@ -23,6 +25,15 @@ func main() {
 	DB.Logger.LogMode(logger.Info)
 
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"}, // frontend origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	r.POST("auth/signup", auth.SignUp)
 	r.POST("/auth/login", auth.Login)
